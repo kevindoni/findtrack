@@ -23,7 +23,17 @@ function StatCard({ label, value, hint, hintColor = 'text-green-600', icon }) {
   );
 }
 
-export default function Dashboard() {
+export default function Dashboard({ user }) {
+  const sekarang = new Date();
+  const jam = sekarang.getHours();
+  const sapaan =
+    jam >= 4 && jam < 11
+      ? 'selamat pagi'
+      : jam >= 11 && jam < 15
+        ? 'selamat siang'
+        : jam >= 15 && jam < 18
+          ? 'selamat sore'
+          : 'selamat malam';
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState('');
   const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
@@ -44,7 +54,9 @@ export default function Dashboard() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Halo!</h1>
+          <h1 className="text-2xl font-bold">
+            Hai {user?.name || 'Kamu'}, {sapaan}!
+          </h1>
           <p className="text-sm text-gray-500">Semangat terus mengelola keuanganmu!</p>
         </div>
         <input

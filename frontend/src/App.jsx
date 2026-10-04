@@ -71,30 +71,28 @@ function Sidebar({ user, onLogout }) {
             <p className="truncate text-sm font-semibold">{user?.name}</p>
             <p className="truncate text-xs text-white/50">{user?.email}</p>
           </div>
-          <button
-            onClick={async () => {
-              await api.logout();
-              onLogout();
-              navigate('/auth/login');
-            }}
-            title="Keluar"
-            className="ml-2 rounded-lg bg-white/10 px-2.5 py-1.5 text-xs hover:bg-green-600"
-          >
-            Keluar
-          </button>
+      <button
+        onClick={async () => {
+          await api.logout();
+          onLogout();
+          navigate('/');
+        }}
+        title="Keluar"
+        className="ml-2 rounded-lg bg-white/10 px-2.5 py-2.5 text-xs text-white/80 hover:bg-white/20"
+      >
+        Keluar
+      </button>
         </div>
       </div>
     </aside>
   );
 }
 
-function MobileHeader({ user }) {
+function MobileHeader() {
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-between bg-pine-900 px-4 py-3 text-white md:hidden">
-      <Brand />
-      <div className="grid size-9 place-items-center rounded-full bg-green-600 text-sm font-bold">
-        {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-      </div>
+    <header className="sticky top-0 z-40 flex items-center gap-2 border-b border-gray-200 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
+      <LogoMark size={28} />
+      <span className="text-lg font-black tracking-wide text-pine-900">FINTRACK</span>
     </header>
   );
 }
@@ -166,9 +164,10 @@ export default function App() {
             <div className="flex min-h-screen">
               <Sidebar user={user} onLogout={() => setUser(null)} />
               <div className="flex min-w-0 flex-1 flex-col">
-                            <main className="min-w-0 flex-1 p-4 pb-28 md:p-8 md:pb-8">
+                <MobileHeader user={user} />
+                <main className="min-w-0 flex-1 p-4 pb-28 md:p-8 md:pb-8">
                   <Routes>
-                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="dashboard" element={<Dashboard user={user} />} />
                     <Route path="transactions" element={<Transactions />} />
                     <Route path="budgets" element={<Budgets />} />
                     <Route path="todos" element={<Todos />} />
@@ -181,11 +180,11 @@ export default function App() {
               <BottomNav />
                           </div>
           ) : (
-            <Navigate to="/auth/login" replace />
+            <Navigate to="/" replace />
           )
         }
       />
-      <Route path="*" element={<Navigate to={user ? '/app/dashboard' : '/auth/login'} replace />} />
+      <Route path="*" element={<Navigate to={user ? '/app/dashboard' : '/'} replace />} />
     </Routes>
   );
 }
