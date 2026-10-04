@@ -5,7 +5,8 @@ import {
   ReceiptText,
   Target,
   ListChecks,
-  Menu,
+  Tags,
+  UserRound,
   Settings as SettingsIcon,
   LogOut,
 } from 'lucide-react';
@@ -18,6 +19,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Transactions from './pages/Transactions.jsx';
 import Budgets from './pages/Budgets.jsx';
 import Todos from './pages/Todos.jsx';
+import Kategori from './pages/Kategori.jsx';
 import Settings from './pages/Settings.jsx';
 
 const NAV = [
@@ -44,7 +46,8 @@ function Sidebar({ user, onLogout }) {
         <Brand />
       </div>
       <nav className="mt-8 flex flex-col gap-1 px-3">
-        {[...NAV, { to: '/app/settings', label: 'Pengaturan', full: 'Pengaturan', icon: SettingsIcon }].map((n) => (
+        {[...NAV, { to: '/app/kategori', label: 'Kategori', full: 'Kategori', icon: Tags },
+      { to: '/app/settings', label: 'Pengaturan', full: 'Pengaturan', icon: SettingsIcon }].map((n) => (
           <NavLink
             key={n.to}
             to={n.to}
@@ -96,7 +99,7 @@ function MobileHeader({ user }) {
   );
 }
 
-function BottomNav({ onMore }) {
+function BottomNav() {
   const item = (n) => (
     <NavLink
       key={n.to}
@@ -114,66 +117,24 @@ function BottomNav({ onMore }) {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-gray-200 bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] pt-1 backdrop-blur md:hidden">
       {NAV.map(item)}
-      <button
-        onClick={onMore}
-        className="flex flex-col items-center gap-0.5 px-1 py-1.5 text-[10px] font-medium text-gray-400"
+      <NavLink
+        to="/app/settings"
+        className={({ isActive }) =>
+          `flex flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 text-[10px] font-medium ${
+            isActive ? 'text-green-600' : 'text-gray-400'
+          }`
+        }
       >
-        <Menu size={20} />
-        Lainnya
-      </button>
+        <UserRound size={20} />
+        Akun
+      </NavLink>
     </nav>
-  );
-}
-
-function MoreSheet({ user, onClose, onLogout }) {
-  const navigate = useNavigate();
-  return (
-    <div className="fixed inset-0 z-50 md:hidden" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/40" />
-      <div
-        className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-white p-6 pb-10 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-200" />
-        <div className="mb-4 flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-full bg-green-600 text-base font-bold text-white">
-            {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-          </span>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">{user?.name}</p>
-            <p className="truncate text-xs text-gray-400">{user?.email}</p>
-          </div>
-        </div>
-        <button
-          onClick={() => {
-            onClose();
-            navigate('/app/settings');
-          }}
-          className="flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-medium hover:bg-gray-50"
-        >
-          <SettingsIcon size={16} className="text-gray-500" />
-          Pengaturan
-        </button>
-        <button
-          onClick={async () => {
-            await api.logout();
-            onLogout();
-            navigate('/auth/login');
-          }}
-          className="flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-medium text-red-600 hover:bg-red-50"
-        >
-          <LogOut size={16} />
-          Keluar
-        </button>
-      </div>
-    </div>
   );
 }
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     api
@@ -205,21 +166,20 @@ export default function App() {
             <div className="flex min-h-screen">
               <Sidebar user={user} onLogout={() => setUser(null)} />
               <div className="flex min-w-0 flex-1 flex-col">
-                <MobileHeader user={user} />
-                <main className="min-w-0 flex-1 p-4 pb-28 md:p-8 md:pb-8">
+                            <main className="min-w-0 flex-1 p-4 pb-28 md:p-8 md:pb-8">
                   <Routes>
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="transactions" element={<Transactions />} />
                     <Route path="budgets" element={<Budgets />} />
                     <Route path="todos" element={<Todos />} />
-                    <Route path="settings" element={<Settings user={user} onUserChange={setUser} />} />
+                    <Route path="kategori" element={<Kategori />} />
+          <Route path="settings" element={<Settings user={user} onUserChange={setUser} onLogout={() => { api.logout(); setUser(null); }} />} />
                     <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
                   </Routes>
                 </main>
               </div>
-              <BottomNav onMore={() => setMoreOpen(true)} />
-              {moreOpen && <MoreSheet user={user} onClose={() => setMoreOpen(false)} onLogout={() => setUser(null)} />}
-            </div>
+              <BottomNav />
+                          </div>
           ) : (
             <Navigate to="/auth/login" replace />
           )
