@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Build output
+dist/
+build/
+
+# Test artifacts
+backend/tmp-test/
+
+# EnvKit — per-project PHP error log (do not commit)
+php_error.log
+
+# === Hostinger (API PHP) ===
+backend-php/api/config.php
+backend-php/api/config.local.php
+backend-php/deploy-stage/
+backend-php/fix-server.ps1
+error_log
+
+# === Build & deploy artifact ===
+frontend/dist/
+deploy-fintrack.zip
+
+# === Tool & panduan eksternal ===
+.kilo/
+USAJ*.pdf

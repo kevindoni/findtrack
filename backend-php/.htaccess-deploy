@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # API PHP (diutamakan sebelum SPA)
+  RewriteRule ^api/index\.php$ - [L]
+  RewriteRule ^api(/.*)?$ api/index.php [L]
+
+  # SPA React
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
