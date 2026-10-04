@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Tags, ShieldCheck, AlertTriangle, Check, X, Pencil, LogOut } from 'lucide-react';
+import { Trash2, User, Tags, ShieldCheck, AlertTriangle, Check, X, Pencil, LogOut } from 'lucide-react';
 import { api } from '../lib/api';
 
 const TYPES = ['INCOME', 'EXPENSE'];
