@@ -12,7 +12,7 @@ function b64url_decode(string $data): string
 
 function jwt_sign(array $payload): string
 {
-    $secret = config()['jwt_secret'];
+    $secret = config()['jwt_secret'] ?? 'dev-secret';
     $header = b64url_encode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
     $body = b64url_encode(json_encode($payload));
     $signature = b64url_encode(hash_hmac('sha256', "$header.$body", $secret, true));
@@ -25,7 +25,7 @@ function jwt_verify(string $token): ?array
     if (count($parts) !== 3) return null;
 
     [$header, $body, $signature] = $parts;
-    $secret = config()['jwt_secret'];
+    $secret = config()['jwt_secret'] ?? 'dev-secret';
     $expected = b64url_encode(hash_hmac('sha256', "$header.$body", $secret, true));
     if (!hash_equals($expected, $signature)) return null;
 
