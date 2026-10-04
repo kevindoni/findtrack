@@ -57,3 +57,67 @@ deploy-fintrack.zip  → paket deploy siap upload ke hosting
 ## Dokumentasi
 
 Dokumen lengkap (PRD, ERD, Business Rules, API, pengujian) ada di repositori internal kelompok.
+
+## Struktur Database (ERD)
+
+```mermaid
+erDiagram
+    USERS ||--o{ CATEGORIES : "memiliki"
+    USERS ||--o{ FINANCIAL_TODOS : "memiliki"
+    USERS ||--o{ TRANSACTIONS : "memiliki"
+    USERS ||--o{ BUDGETS : "memiliki"
+    CATEGORIES ||--o{ TRANSACTIONS : "digunakan"
+    CATEGORIES ||--o{ BUDGETS : "dipakai"
+    FINANCIAL_TODOS |o--o| TRANSACTIONS : "auto expense"
+
+    USERS {
+        char_36 id PK
+        varchar_100 name
+        varchar_255 email UK
+        varchar_255 password_hash
+        datetime created_at
+        datetime updated_at
+    }
+    CATEGORIES {
+        char_36 id PK
+        char_36 user_id FK
+        varchar_100 name
+        transaction_type type
+        datetime created_at
+        datetime updated_at
+    }
+    FINANCIAL_TODOS {
+        char_36 id PK
+        char_36 user_id FK
+        varchar_200 title
+        decimal_15_2 amount
+        date due_date
+        tinyint_1 is_completed
+        tinyint_1 auto_expense
+        datetime created_at
+        datetime updated_at
+    }
+    TRANSACTIONS {
+        char_36 id PK
+        char_36 user_id FK
+        char_36 category_id FK
+        char_36 source_todo_id FK_UK "nullable, unique - auto expense"
+        transaction_type type
+        decimal_15_2 amount
+        date date
+        text notes
+        datetime created_at
+        datetime updated_at
+    }
+    BUDGETS {
+        char_36 id PK
+        char_36 user_id FK
+        char_36 category_id FK
+        decimal_15_2 amount_limit
+        date month_year "selalu tanggal 1"
+        datetime created_at
+        datetime updated_at
+    }
+```
+
+Detail relasi & business rules: lihat `fintrack.md` (Bagian 10 & 35).

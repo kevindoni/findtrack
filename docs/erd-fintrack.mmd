@@ -1,0 +1,79 @@
+# ERD FINTRACK — Mermaid
+
+> Render otomatis di GitHub. Export PNG: salin blok kode ke https://mermaid.live → Actions → PNG/SVG.
+
+```mermaid
+erDiagram
+    USERS ||--o{ CATEGORIES : "memiliki"
+    USERS ||--o{ FINANCIAL_TODOS : "memiliki"
+    USERS ||--o{ TRANSACTIONS : "memiliki"
+    USERS ||--o{ BUDGETS : "memiliki"
+    CATEGORIES ||--o{ TRANSACTIONS : "digunakan"
+    CATEGORIES ||--o{ BUDGETS : "dipakai"
+    FINANCIAL_TODOS |o--o| TRANSACTIONS : "auto expense"
+
+    USERS {
+        char_36 id PK
+        varchar_100 name
+        varchar_255 email UK
+        varchar_255 password_hash
+        datetime created_at
+        datetime updated_at
+    }
+
+    CATEGORIES {
+        char_36 id PK
+        char_36 user_id FK
+        varchar_100 name
+        transaction_type type
+        datetime created_at
+        datetime updated_at
+    }
+
+    FINANCIAL_TODOS {
+        char_36 id PK
+        char_36 user_id FK
+        varchar_200 title
+        decimal_15_2 amount
+        date due_date
+        tinyint_1 is_completed
+        tinyint_1 auto_expense
+        datetime created_at
+        datetime updated_at
+    }
+
+    TRANSACTIONS {
+        char_36 id PK
+        char_36 user_id FK
+        char_36 category_id FK
+        char_36 source_todo_id FK_UK
+        transaction_type type
+        decimal_15_2 amount
+        date date
+        text notes
+        datetime created_at
+        datetime updated_at
+    }
+
+    BUDGETS {
+        char_36 id PK
+        char_36 user_id FK
+        char_36 category_id FK
+        decimal_15_2 amount_limit
+        date month_year
+        datetime created_at
+        datetime updated_at
+    }
+```
+
+## Catatan Relasi
+
+| Relasi | Kardinalitas | Keterangan |
+| :--- | :--- | :--- |
+| users → categories | 1 : N | `ON DELETE CASCADE` |
+| users → financial_todos | 1 : N | `ON DELETE CASCADE` |
+| users → transactions | 1 : N | `ON DELETE CASCADE` |
+| users → budgets | 1 : N | `ON DELETE CASCADE` |
+| categories → transactions | 1 : N | `ON DELETE RESTRICT` (BR-DATA-03) |
+| categories → budgets | 1 : N | `ON DELETE RESTRICT` |
+| financial_todos → transactions | 1 : 0..1 | via `source_todo_id` + unique (BR-AUTO-03) |

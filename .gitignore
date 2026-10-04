@@ -47,7 +47,9 @@ fintrack.md
 design.md
 pembagian-tugas.md
 checklist-capstone.md
-docs/
+docs/*
+!docs/erd-fintrack.dbml
+!docs/erd-fintrack.mmd
 backend-php/install.php
 
 # === SQLite lokal (development) & skrip tes ===

@@ -1,0 +1,91 @@
+// =========================================================
+// FINTRACK — ERD (DBML)
+// Cara pakai: buka https://dbdiagram.io → New Diagram →
+// tempel seluruh isi file ini → ERD tampil → Export PNG/PDF
+// (untuk Proposal, Laporan, atau PPT Capstone)
+// =========================================================
+
+Project fintrack {
+  database_type: 'MySQL'
+  Note: 'FINTRACK — Catat Keuangan Pribadi + To-Do List Finansial (Capstone UT)'
+}
+
+Enum transaction_type {
+  INCOME
+  EXPENSE
+}
+
+Table users {
+  id char(36) [pk]
+  name varchar(100) [not null]
+  email varchar(255) [not null, unique]
+  password_hash varchar(255) [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Note: 'Akun pengguna — password disimpan sebagai hash bcrypt'
+}
+
+Table categories {
+  id char(36) [pk]
+  user_id char(36) [not null]
+  name varchar(100) [not null]
+  type transaction_type [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Note: 'Kategori transaksi — unik per user (nama + tipe)'
+}
+
+Table financial_todos {
+  id char(36) [pk]
+  user_id char(36) [not null]
+  title varchar(200) [not null]
+  amount decimal(15,2) [not null, default: 0]
+  due_date date [null]
+  is_completed tinyint(1) [not null, default: 0]
+  auto_expense tinyint(1) [not null, default: 0]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Note: 'To-Do finansial — auto_expense: selesai → transaksi tercatat otomatis'
+}
+
+Table transactions {
+  id char(36) [pk]
+  user_id char(36) [not null]
+  category_id char(36) [not null]
+  source_todo_id char(36) [null, unique]
+  type transaction_type [not null]
+  amount decimal(15,2) [not null]
+  date date [not null]
+  notes text [null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Note: 'Transaksi keuangan — source_todo_id: hasil auto expense dari to-do'
+}
+
+Table budgets {
+  id char(36) [pk]
+  user_id char(36) [not null]
+  category_id char(36) [not null]
+  amount_limit decimal(15,2) [not null]
+  month_year date [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Note: 'Budget bulanan per kategori — month_year selalu tanggal 1 (YYYY-MM-01)'
+}
+
+// ---- Relasi ----
+
+Ref: categories.user_id > users.id [delete: cascade]
+Ref: financial_todos.user_id > users.id [delete: cascade]
+Ref: transactions.user_id > users.id [delete: cascade]
+Ref: transactions.category_id > categories.id [delete: restrict]
+Ref: budgets.user_id > users.id [delete: cascade]
+Ref: budgets.category_id > categories.id [delete: restrict]
+
+// To-Do selesai (auto expense) → maksimal 1 transaksi (unique source_todo_id)
+Ref: transactions.source_todo_id - financial_todos.id
