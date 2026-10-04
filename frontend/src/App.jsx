@@ -27,6 +27,7 @@ const NAV = [
   { to: '/app/transactions', label: 'Transaksi', full: 'Transaksi', icon: ReceiptText },
   { to: '/app/budgets', label: 'Budget', full: 'Budget', icon: Target },
   { to: '/app/todos', label: 'To-Do', full: 'Financial To-Do', icon: ListChecks },
+  { to: '/app/kategori', label: 'Kategori', full: 'Kategori', icon: Tags },
 ];
 
 function Brand() {
@@ -46,8 +47,7 @@ function Sidebar({ user, onLogout }) {
         <Brand />
       </div>
       <nav className="mt-8 flex flex-col gap-1 px-3">
-        {[...NAV, { to: '/app/kategori', label: 'Kategori', full: 'Kategori', icon: Tags },
-      { to: '/app/settings', label: 'Pengaturan', full: 'Pengaturan', icon: SettingsIcon }].map((n) => (
+        {[...NAV, { to: '/app/settings', label: 'Pengaturan', full: 'Pengaturan', icon: SettingsIcon }].map((n) => (
           <NavLink
             key={n.to}
             to={n.to}
@@ -116,7 +116,7 @@ function BottomNav() {
   );
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-gray-200 bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] pt-1 backdrop-blur md:hidden">
-      {NAV.map(item)}
+      {NAV.filter((n) => n.to !== '/app/settings').map(item)}
       <NavLink
         to="/app/settings"
         className={({ isActive }) =>
