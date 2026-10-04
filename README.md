@@ -121,3 +121,23 @@ erDiagram
 ```
 
 Detail relasi & business rules: lihat `fintrack.md` (Bagian 10 & 35).
+
+## Tangkapan Layar
+
+| Dashboard (Desktop) | Dashboard (Mobile) |
+| :---: | :---: |
+| ![Dashboard Desktop](docs/screenshots/dashboard-desktop.png) | ![Dashboard Mobile](docs/screenshots/dashboard-mobile.png) |
+
+| Landing | Transaksi |
+| :---: | :---: |
+| ![Landing](docs/screenshots/landing.png) | ![Transaksi](docs/screenshots/transaksi.png) |
+
+| Pengaturan | To-Do |
+| :---: | :---: |
+| ![Pengaturan](docs/screenshots/pengaturan.png) | ![To-Do](docs/screenshots/to-do.png) |
+
+## ERD Database
+
+![ERD FINTRACK](docs/erd-fintrack.png)
+
+> Versi interaktif: [dbdiagram.io](https://dbdiagram.io) — sumber DBML: [`docs/erd-fintrack.dbml`](docs/erd-fintrack.dbml)
