@@ -254,7 +254,7 @@ try {
         $params = [$uid];
         $month = $_GET['month'] ?? '';
         if (preg_match('/^\d{4}-\d{2}$/', $month)) {
-            $where .= " AND DATE_FORMAT(t.date, '%Y-%m') = ?";
+            $where .= " AND substr(t.date, 1, 7) = ?";
             $params[] = $month;
         }
         $catId = $_GET['category_id'] ?? '';
@@ -385,7 +385,7 @@ try {
         $spent = (float)(row(
             "SELECT COALESCE(SUM(amount), 0) AS s FROM transactions
              WHERE user_id = ? AND type = 'EXPENSE'
-               AND category_id = ? AND DATE_FORMAT(date, '%Y-%m') = ?",
+               AND category_id = ? AND substr(date, 1, 7) = ?",
             [$uid, $b['category_id'], $month]
         )['s'] ?? 0);
         $limit = (float)$b['amount_limit'];
@@ -409,7 +409,7 @@ try {
         $cats = rows(
             'SELECT b.id, b.category_id, c.name AS category_name, b.amount_limit, b.month_year
              FROM budgets b JOIN categories c ON c.id = b.category_id
-             WHERE b.user_id = ? AND DATE_FORMAT(b.month_year, \'%Y-%m\') = ?
+             WHERE b.user_id = ? AND substr(b.month_year, 1, 7) = ?
              ORDER BY b.amount_limit DESC',
             [$uid, $month]
         );
@@ -580,7 +580,7 @@ try {
         db()->beginTransaction();
         try {
             $todo = row('SELECT id, title, amount, due_date, is_completed, auto_expense
-                         FROM financial_todos WHERE id = ? AND user_id = ? FOR UPDATE', [$id, $uid]);
+                         FROM financial_todos WHERE id = ? AND user_id = ?', [$id, $uid]);
             if (!$todo) {
                 db()->rollBack();
                 json_error(404, 'NOT_FOUND', 'To-Do tidak ditemukan.');
@@ -644,7 +644,7 @@ try {
                COALESCE(SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END), 0) AS total_income,
                COALESCE(SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END), 0) AS total_expense
              FROM transactions
-             WHERE user_id = ? AND DATE_FORMAT(date, '%Y-%m') = ?",
+             WHERE user_id = ? AND substr(date, 1, 7) = ?",
             [$uid, $month]
         );
 
@@ -656,10 +656,10 @@ try {
              LEFT JOIN (
                SELECT category_id, SUM(amount) AS spent
                FROM transactions
-               WHERE user_id = ? AND type = 'EXPENSE' AND DATE_FORMAT(date, '%Y-%m') = ?
+               WHERE user_id = ? AND type = 'EXPENSE' AND substr(date, 1, 7) = ?
                GROUP BY category_id
              ) s ON s.category_id = b.category_id
-             WHERE b.user_id = ? AND DATE_FORMAT(b.month_year, '%Y-%m') = ?",
+             WHERE b.user_id = ? AND substr(b.month_year, 1, 7) = ?",
             [$uid, $month, $uid, $month]
         );
         $budgets = array_map(function ($b) use ($uid, $month) {
@@ -693,12 +693,12 @@ try {
         }
 
         $seriesRows = rows(
-            "SELECT DATE_FORMAT(date, '%Y-%m') AS ym,
+            "SELECT substr(date, 1, 7) AS ym,
                     SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END) AS income,
                     SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) AS expense
              FROM transactions
-             WHERE user_id = ? AND date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-             GROUP BY DATE_FORMAT(date, '%Y-%m')
+             WHERE user_id = ? AND date >= ?
+             GROUP BY substr(date, 1, 7)
              ORDER BY ym ASC",
             [$uid]
         );
@@ -717,7 +717,7 @@ try {
             "SELECT c.name, SUM(t.amount) AS total
              FROM transactions t
              JOIN categories c ON c.id = t.category_id
-             WHERE t.user_id = ? AND t.type = 'EXPENSE' AND DATE_FORMAT(t.date, '%Y-%m') = ?
+             WHERE t.user_id = ? AND t.type = 'EXPENSE' AND substr(t.date, 1, 7) = ?
              GROUP BY c.id, c.name
              ORDER BY total DESC",
             [$uid, $month]

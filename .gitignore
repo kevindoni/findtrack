@@ -39,3 +39,18 @@ deploy-fintrack.zip
 # === Tool & panduan eksternal ===
 .kilo/
 USAJ*.pdf
+
+# === Dokumen internal Capstone (konsumsi pribadi, tidak untuk repo) ===
+*.docx
+USAJ*.pdf
+fintrack.md
+design.md
+pembagian-tugas.md
+checklist-capstone.md
+docs/
+backend-php/install.php
+
+# === SQLite lokal (development) & skrip tes ===
+backend-php/database/
+backend-php/tmp-test/
+backend-php/test-register-cli.php
