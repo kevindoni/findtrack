@@ -101,7 +101,7 @@ erDiagram
         char_36 id PK
         char_36 user_id FK
         char_36 category_id FK
-        char_36 source_todo_id FK_UK "nullable, unique - auto expense"
+        char_36 source_todo_id UK "nullable - auto expense dari to-do"
         transaction_type type
         decimal_15_2 amount
         date date
