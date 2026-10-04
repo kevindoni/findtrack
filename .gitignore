@@ -51,6 +51,6 @@ docs/
 backend-php/install.php
 
 # === SQLite lokal (development) & skrip tes ===
-backend-php/database/
+database/
 backend-php/tmp-test/
 backend-php/test-register-cli.php
